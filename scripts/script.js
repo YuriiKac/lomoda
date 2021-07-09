@@ -174,10 +174,20 @@ try {
   const cardGoodTitle = document.querySelector(".card-good__title");
   const cardGoodPrice = document.querySelector(".card-good__price");
   const cardGoodColor = document.querySelector(".card-good__color");
+  const cardGoodSelectWrapper = document.querySelectorAll(
+    ".card-good__select__wrapper"
+  );
   const cardGoodColorList = document.querySelector(".card-good__color-list");
   const cardGoodSizes = document.querySelector(".card-good__sizes");
   const cardGoodSizesList = document.querySelector(".card-good__sizes-list");
   const cardGoodBuy = document.querySelector(".card-good__buy");
+
+  const generetaList = (data) =>
+    data.reduce(
+      (html, item, i) =>
+        html + `<li class="card-good__select-item" data-id='${i}'>${item}</li>`,
+      ""
+    );
 
   const renderCardGood = ([{ brand, name, cost, color, sizes, photo }]) => {
     cardGoodImage.src = `goods-image/${photo}`;
@@ -187,17 +197,35 @@ try {
     cardGoodPrice.textContent = `${cost} ₽`;
     if (color) {
       cardGoodColor.textContent = color[0];
+      cardGoodColor.dataset.id = 0;
+      cardGoodColorList.innerHTML = generetaList(color);
     } else {
       cardGoodColor.style.display = "none";
     }
     if (sizes) {
       cardGoodSizes.textContent = sizes[0];
+      cardGoodSizes.dataset.id = 0;
+      cardGoodSizesList.innerHTML = generetaList(sizes);
     } else {
       cardGoodSizes.style.display = "none";
     }
   };
-
   getGoods(renderCardGood, "id", hash);
+  cardGoodSelectWrapper.forEach((item) => {
+    item.addEventListener("click", (e) => {
+      const target = e.target;
+
+      if (target.closest(".card-good__select")) {
+        target.classList.toggle("card-good__select__open");
+      }
+      if (target.closest(".card-good__select-item")) {
+        const cardGoodSelect = item.querySelector(".card-good__select");
+        cardGoodSelect.textContent = target.textContent;
+        cardGoodSelect.dataset.id = target.dataset.id;
+        cardGoodSelect.classList.remove("card-good__select__open");
+      }
+    });
+  });
 } catch (err) {
   console.log(err);
 }
